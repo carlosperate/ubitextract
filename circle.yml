@@ -1,0 +1,56 @@
+## Customize the test machine
+machine:
+  timezone:
+    Europe/London
+
+machine:
+  environment:
+    XCODE_SCHEME: symbolicator
+    XCODE_WORKSPACE: symbolicator
+    # Turn off Ruby whinning
+    RUBYOPT: W0
+    xcode:
+      version: 7.3
+
+
+  # Version of ruby to use
+  ruby:
+    version:
+      1.8.7-p358-falcon-perf
+
+  # Override /etc/hosts
+  hosts:
+    circlehost: 127.0.0.1
+    dev.mycompany.com: 127.0.0.1
+
+## Customize dependencies
+dependencies:
+  pre:
+    # OS extra info
+    - uname -a
+    - ldd --version
+    - lsb_release -d
+
+    # Python info
+    - python --version
+    - python -c "import struct; print(struct.calcsize('P') * 8)"
+    - pip freeze
+
+    # The application is expecting xcode to be installed in its normal location
+    - sudo ln -s /Applications/Xcode-7.3.app /Applications/Xcode.app
+
+  override:
+    - pip install pyinstaller==3.1.1
+    - python setup.py install
+
+    # Check installed packages
+    - pip freeze
+
+    # Build mu using PyInstaller
+    - pyinstaller package\pyinstaller-cli.spec
+    - pyinstaller package\pyinstaller-gui.spec
+    - mv dist artifacts
+
+general:
+  artifacts:
+    - "artifacts/*"
