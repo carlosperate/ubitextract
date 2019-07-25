@@ -100,8 +100,27 @@ def read_flash_hex(decode_hex=False, **kwargs):
         )
 
 
+def read_uicr_full_hex(decode_hex=False):
+    """Read the UICR Customer data only.
+
+    :return: String with the nicely decoded UIR Customer area data.
+    """
+    uicr_data = programmer.read_uicr(
+        address=programmer.UICR_START,
+        count=programmer.UICR_SIZE_BYTES,
+    )
+    if decode_hex:
+        return _bytes_to_pretty_hex(
+            uicr_data, offset=programmer.UICR_START
+        )
+    else:
+        return _bytes_to_intel_hex(
+            uicr_data, offset=programmer.UICR_START
+        )
+
+
 def read_uicr_customer_hex(decode_hex=False):
-    """Read the UICR Customer data.
+    """Read the UICR Customer data only.
 
     :return: String with the nicely decoded UIR Customer area data.
     """
@@ -115,8 +134,7 @@ def read_uicr_customer_hex(decode_hex=False):
         )
     else:
         return _bytes_to_intel_hex(
-            uicr_data, offset=programmer.UICR_CUSTOMER_START
-        )
+            uicr_data, offset=programmer.UICR_CUSTOMER_START)
 
 
 def read_micropython():
