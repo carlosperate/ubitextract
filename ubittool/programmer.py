@@ -9,6 +9,11 @@ MICROBIT_FLASH_START = 0x00000000
 MICROBIT_FLASH_SIZE_BYTES = 256 * 1024
 MICROBIT_FLASH_END = MICROBIT_FLASH_START + MICROBIT_FLASH_SIZE_BYTES
 
+# nRF51 16 KBs of RAM starts at address 0x2000_0000
+MICROBIT_RAM_START = 0x20000000
+MICROBIT_RAM_SIZE_BYTES = 16 * 1024
+MICROBIT_RAM_END = MICROBIT_RAM_START + MICROBIT_RAM_SIZE_BYTES
+
 # nRF51 User Information Configuration Registers
 UICR_START = 0x10001000
 UICR_SIZE_BYTES = 0x100
@@ -84,6 +89,29 @@ def read_flash(address=MICROBIT_FLASH_START, count=MICROBIT_FLASH_SIZE_BYTES):
         )
     return _read_continuous_memory(address=address, count=count)
 
+
+def read_ram(address=MICROBIT_RAM_START, count=MICROBIT_RAM_SIZE_BYTES):
+    """Read the contents of the micro:bit RAM memory.
+
+    Start from the 'address' argument for as many bytes as indicated by the
+    'count' argument.
+
+    :param address: Integer indicating the start address to read.
+    :param count: Integer indicating how many bytes to read.
+    :return: A list of integers, each representing a byte of data.
+    """
+    last_byte = address + count
+    if (
+        not (MICROBIT_RAM_START <= address < MICROBIT_RAM_END)
+        or last_byte > MICROBIT_RAM_END
+    ):
+        raise ValueError(
+            "Cannot read a RAM location out of boundaries.\n"
+            "Reading from {} to {},\nlimits from {} to {}".format(
+                address, last_byte, MICROBIT_RAM_START, MICROBIT_RAM_END
+            )
+        )
+    return _read_continuous_memory(address=address, count=count)
 
 def read_uicr(address=UICR_START, count=UICR_SIZE_BYTES):
     """Read the contents of the micro:bit UICR memory.

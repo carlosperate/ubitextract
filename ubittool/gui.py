@@ -18,6 +18,7 @@ from ubittool.cmds import (
     read_python_code,
     read_micropython,
     read_flash_hex,
+    read_ram_hex,
     read_uicr_full_hex,
     read_uicr_customer_hex,
     compare_full_flash_hex,
@@ -162,6 +163,8 @@ class UBitToolWindow(tk.Tk):
     CMD_READ_UPY = "Read MicroPython runtime"
     CMD_READ_FLASH_HEX = "Read full flash contents (Intel Hex)"
     CMD_READ_FLASH_PRETTY = "Read full flash contents (Pretty Hex)"
+    CMD_READ_RAM_HEX = "Read full RAM contents (Intel Hex)"
+    CMD_READ_RAM_PRETTY = "Read full RAM contents (Pretty Hex)"
     CMD_READ_UICR_FULL = "Read UICR Full"
     CMD_READ_UICR_CUSTOMER = "Read UICR Customer"
     CMD_COMPARE_FLASH = "Compare full flash contents (Intel Hex)"
@@ -244,6 +247,12 @@ class UBitToolWindow(tk.Tk):
             command=self.read_full_flash_pretty,
         )
         self.nrf_menu.add_command(
+            label=self.CMD_READ_RAM_HEX, command=self.read_ram_intel,
+        )
+        self.nrf_menu.add_command(
+            label=self.CMD_READ_RAM_PRETTY, command=self.read_ram_pretty,
+        )
+        self.nrf_menu.add_command(
             label=self.CMD_READ_UICR_FULL, command=self.read_uicr_full
         )
         self.nrf_menu.add_command(
@@ -312,6 +321,25 @@ class UBitToolWindow(tk.Tk):
         self.set_next_cmd(self.CMD_READ_FLASH_PRETTY)
         hex_str = read_flash_hex(decode_hex=True)
         self.text_viewer.replace(hex_str)
+
+    def read_ram_intel(self):
+        """Read the full contents of RAM.
+
+        Displays it as Intel Hex in the read-only text viewer.
+        """
+        self.set_next_cmd(self.CMD_READ_RAM_HEX)
+        uicr_hex_str = read_ram_hex(decode_hex=False)
+        self.text_viewer.replace(uicr_hex_str)
+
+    def read_ram_pretty(self):
+        """Read the full contents of RAM.
+
+        Displays it as a pretty hex and ASCII string in the read-only text
+        viewer.
+        """
+        self.set_next_cmd(self.CMD_READ_RAM_PRETTY)
+        uicr_hex_str = read_ram_hex(decode_hex=True)
+        self.text_viewer.replace(uicr_hex_str)
 
     def read_uicr_full(self):
         """Read the full contents of UICR.

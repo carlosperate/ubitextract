@@ -100,6 +100,30 @@ def read_flash_hex(decode_hex=False, **kwargs):
         )
 
 
+def read_ram_hex(decode_hex=False, **kwargs):
+    """Read data from RAM and return as a hex string.
+
+    Read as a number of bytes of the micro:bit RAM from the given address.
+    Can return it in Intel Hex format or a pretty formatted and decoded hex
+    string.
+
+    :param address: Integer indicating the start address to read.
+    :param count: Integer indicating hoy many bytes to read.
+    :param decode_hex: True selects nice decoded format, False selects Intel
+            Hex format.
+    :return: String with the hex formatted as indicated.
+    """
+    ram_data = programmer.read_ram(**kwargs)
+    if decode_hex:
+        return _bytes_to_pretty_hex(
+            ram_data, offset=programmer.MICROBIT_RAM_START
+        )
+    else:
+        return _bytes_to_intel_hex(
+            ram_data, offset=programmer.MICROBIT_RAM_START
+        )
+
+
 def read_uicr_full_hex(decode_hex=False):
     """Read the UICR Customer data only.
 
